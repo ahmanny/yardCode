@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import TextInput from "./TextInput";
 import { z } from "zod";
 import { isValidPhoneNumber } from "react-phone-number-input";
@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import PhoneNoInput from "./PhoneNoInput";
 import TextereaInput from "./TextereaInput";
 import toast from "react-hot-toast";
+import LoadingDots from "../LoadingDots";
 
 const WaitlistSchema = z.object({
   name: z.string().min(3, "Enter your name"),
@@ -34,11 +35,15 @@ export default function WaitlistForm() {
   } = useForm<WaitlistFormData>({
     resolver: zodResolver(WaitlistSchema),
   });
-
+  const [loading, setLoading] = useState(false);
   const onSubmit = (data: WaitlistFormData) => {
-    console.log(data);
-    toast.success("form submitted!");
-    reset();
+    setLoading(true);
+    setTimeout(() => {
+      toast.success("form submitted!");
+      console.log(data);
+      reset();
+      setLoading(false);
+    }, 4000);
   };
   return (
     <div>
@@ -106,7 +111,11 @@ export default function WaitlistForm() {
         </div>
         <div>
           <button type="submit" className="btn ">
-            Join the Waitlist
+            {loading ? (
+              <LoadingDots loadingText="Joining the Waitlist" />
+            ) : (
+              "Join the Waitlist"
+            )}
           </button>
         </div>
       </form>
